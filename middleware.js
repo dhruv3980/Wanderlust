@@ -23,7 +23,11 @@ exports.saveRedirectUrl = (req,res,next)=>{
 exports.isOwner = async(req,res,next)=>{
     let {id} = req.params;
     let listings = await Listing.findById(id);
-    if(!res.locals.currentuser._id.equal(listings.owner._id)){
+    if (!listings) {
+    req.flash('error', "Listing not found");
+    return res.redirect('/listings');
+    }
+    if(!res.locals.currentuser._id.equals(listings.owner._id)){
         req.flash('error', "You are not the owner of the lisitnds");
        return res.redirect(`/listing/${id}`)
 
@@ -52,7 +56,7 @@ exports.validatReview = (req,res,next)=>{
   let {error} = reviewSchema.validate(req.body);
 
   if(error){
-    let errmsg = error.details.map(el=>el.message.join(","))
+    let errmsg = error.details.map(el=>el.message).join(",")
     throw new ExpressError(400, errmsg);
   }
 
@@ -63,10 +67,10 @@ exports.validatReview = (req,res,next)=>{
 
 exports.isReviewOwner = async(req,res,next)=>{
     let {id, reviewid} = req.params;
-    let Review = await Review.findById(id);
-    if(!res.locals.currentuser._id.equal(Review.author._id)){
+    let review = await Review.findById(reviewid);
+    if(!res.locals.currentuser._id.equals(review.author._id)){
         req.flash('error', "Only the owner can modify this review.");
-        return res.redirect(`/listing/${id}`)
+        return res.redirect(`/listings/${id}`)
 
     }
     next();

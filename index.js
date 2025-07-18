@@ -1,4 +1,6 @@
-
+if(process.env.NODE_ENV!= 'production'){
+    require('dotenv').config()
+}
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -13,13 +15,13 @@ const flash = require('connect-flash');
 const User = require('./models/user.js')
 const passport = require('passport');
 const LocalStrategy = require('passport-local')
-
-
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/reviews.js");
 const signupRouter = require('./routes/user.js')
 
 const dbUrl = "mongodb://127.0.0.1:27017/wanderlust";
+
+
 
 
 main().then(() => {
@@ -86,6 +88,7 @@ app.use('/', signupRouter)
 app.all("*", (req, res, next) => {
     next(new ExpressError(404, "Page Not Found!"));
 })
+
 
 app.use((err, req, res, next) => {
     let { statusCode=500, message="Something went wrong!" } = err;

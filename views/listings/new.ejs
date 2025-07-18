@@ -8,7 +8,7 @@
    
    
     
-    <form action="/listings" method="post" novalidate class="needs-validation">
+    <form action="/listings" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
         <div  class="mb-3 ">
             <label for="title" class="form-label">Title</label>
             <input type="text" name="listing[title]" placeholder="Add a catch title" class="form-control" required>
@@ -31,17 +31,17 @@
                 <label for="description" class="form-label"> Description </label>
                 <textarea name="listing[description]" placeholder="Enter description" class="form-control"  required></textarea>
 
-                    <div class="invalid-feedback">
-     Enter  a valid description
-    </div>
+                <div class="invalid-feedback">
+                     Enter  a valid description
+                 </div>
 
    
 
-         </div>
+        </div>
 
         <div class="mb-3">
-            <label for="image" class="form-label">Image Link</label>
-             <input type="text" name="listing[image]" placeholder="enter image url link" class="form-control">
+            <label for="image" class="form-label">Upload Image </label>
+             <input type="file" name="listing[image]" placeholder="enter image url  link" class="form-control">
         </div>
         
         <div class="row">
