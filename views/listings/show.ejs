@@ -1,0 +1,132 @@
+<% layout("layouts/boilerplate") %>
+
+
+<!-- Add viewport for responsiveness -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<div class="container mt-5">
+
+  <!-- Listing Title -->
+  <div class="row justify-content-center">
+    <div class="col-12 text-center mb-4">
+      <h3 class="fw-bold"><%= listing.title %></h3>
+    </div>
+  </div>
+
+  <!-- Listing Card
+  <div class="row justify-content-center mb-4">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+        <img src="<%= listing.image %>" class="card-img-top img-fluid rounded" alt="listing_image" style="object-fit: cover; height: auto;">
+        <div class="card-body text-center">
+          <p class="card-text">
+            &#8377; <b><%= listing.price.toLocaleString("en-IN") %></b><br>
+            <%= listing.location %><br>
+            <%= listing.country %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Listing Card -->
+<div class="row justify-content-center mb-4">
+  <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+    <div class="card shadow-sm mx-auto border-0" style="max-width: 500px; overflow: hidden; border-radius: 15px;">
+      <img 
+        src="<%= listing.image %>" 
+        class="card-img-top img-fluid" 
+        alt="listing_image" 
+        style="object-fit: cover; width: 100%; height: auto;"
+      >
+      
+    </div>
+
+    <div class="card-body text-center">
+        <p class="card-text mb-0 mt-2"> 
+
+          <b>Owned by <%=listing.owner.username%></b>
+          <br>
+          &#8377; <b><%= listing.price.toLocaleString("en-IN") %></b><br>
+          
+          
+          <%=listing.description%>
+          <br>
+          <%= listing.location %><br>
+          <%= listing.country %>
+        </p>
+      </div>
+  </div>
+</div>
+
+  <% if(currentuser&&  currentuser._id.equals(listing.owner._id)){ %>
+  <!-- Edit & Delete Buttons -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-auto d-flex gap-2 flex-wrap">
+      <a href="/listings/<%= listing.id %>/edit" class="btn btn-dark">Edit</a>
+      <form method="post" action="/listings/<%= listing.id %>?_method=DELETE" class="d-inline">
+        <button class="btn btn-danger">Delete</button>
+      </form>
+    </div>
+  </div>
+
+
+  <hr>
+  <%}%>
+
+  <!-- Leave a Review -->
+   <% if(currentuser) { %>
+  <div class="row justify-content-center ">
+    <div class="col-12 col-md-8 col-lg-6">
+      <h4 class="text-center mb-4">Leave a Review</h4>
+      <form action="/listings/<%= listing.id %>/reviews" method="post" novalidate class="needs-validation" style="max-width: 500px; margin: auto;">
+        <div class="mb-3">
+          <label for="rating" class="form-label">Rating</label>
+          <input type="range" min="1" max="5" name="review[rating]" id="rating" class="form-range">
+        </div>
+        <div class="mb-3">
+          <label for="comment" class="form-label">Comments</label>
+          <textarea name="review[comment]" id="comment" rows="4" class="form-control" required></textarea>
+          <div class="invalid-feedback">
+            Please submit some comments for your review.
+          </div>
+        </div>
+        <!-- Submit Button -->
+        <div class="d-grid">
+          <button class="btn btn-outline-dark">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <hr>
+  <%}%>
+
+  <!-- All Reviews -->
+  <div class="row justify-content-center mb-3">
+    <div class="col-12 col-md-10">
+      <h5 class="mb-3 text-center fw-bold ">All Reviews</h5>
+      <div class="row g-3 justify-content-center">
+        <% for (review of listing.reviews) { %>
+          <div class="col-12 col-md-5">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">@<%=review.author.username%></h5>
+                <p class="card-text"><%= review.comment %></p>
+                <p class="card-text"><%= review.rating %> Stars</p>
+                <div class="d-flex justify-content-end">
+                  <% if(currentuser &&  currentuser._id.equals(review.author._id)){%>
+                  <form action="/listings/<%= listing.id %>/reviews/<%= review.id %>?_method=DELETE" method="post">
+                    <button class="btn btn-sm btn-dark">Delete</button>
+                  </form>
+                  <%}%>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+</div>
