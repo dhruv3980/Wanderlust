@@ -9,6 +9,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 
+
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
@@ -79,9 +80,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser())
 
 app.use((req,res,next)=>{
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    res.locals.currentuser = req.user;
+    res.locals.success = req.flash('success') || '';
+    res.locals.error = req.flash('error') ||'';
+    res.locals.currentuser = req.user ||null;
     next();
 })
 
