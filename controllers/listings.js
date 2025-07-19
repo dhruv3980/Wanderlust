@@ -17,16 +17,27 @@ exports.editListing = async(req,res)=>{
   req.flash("error", "Listings you requested doesnot exist")
   res.redirect('/listings')
   }
-  res.render('listings/edit', {listing})
+  let originalImageUrl =  listing.image.url;
+  originalImageUrl.replace('/upload','/upload/ w_250');
+
+  res.render('listings/edit', {listing, originalImageUrl})
 }
 
 exports.updateListing = async(req,res)=>{
   let {id} = req.params;
+ 
   console.log(req.body.listing);
   if(!req.body ||!req.body.listing){
     throw new ExpressError(404, "Send Data")
   }
-  await Listing.findByIdAndUpdate(id, req.body.listing)
+ let listing = await Listing.findByIdAndUpdate(id, req.body.listing)
+  if(typeof req.file!=='undefined'){
+    const url = req.file.path;
+    const filename = req.file.filename
+
+    listing.image = {url, filename}
+    await listing.save();
+  }
 
   req.flash("success", "Listings updated successfully")
    res.redirect(`/listings/${id}`)
@@ -69,4 +80,16 @@ const filename = req.file.filename
   req.flash("success", "Listing is created successfully")
   res.redirect("/listings");
 
+}
+
+exports.filterListings = async (req, res, next) => {
+    const { q } = req.params;
+    const filteredListings = await Listing.find({category: q }).exec();
+    if (!filteredListings.length) {
+        req.flash("error", "No Listings exists for this filter!");
+        res.redirect("/listings");
+        return;
+    }
+    res.locals.success = `Listings Filtered by ${q}`;
+    res.render("listings/index.ejs", { allListings: filteredListings });
 }

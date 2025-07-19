@@ -121,3 +121,9 @@ body{
 .widthedit{
     width: 25rem !important;
 }
+
+
+#map{
+    height: 100px;
+    width: 100px;
+}

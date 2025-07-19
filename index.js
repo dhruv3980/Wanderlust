@@ -22,8 +22,6 @@ const signupRouter = require('./routes/user.js')
 const dbUrl = "mongodb://127.0.0.1:27017/wanderlust";
 
 
-
-
 main().then(() => {
     console.log("connected to DB");
 }).catch((err) => {
@@ -80,9 +78,25 @@ app.get("/", (req, res) => {
 });
 
 
+
+
+
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use('/', signupRouter)
+
+app.get('/search', (req, res) => {
+    let { q } = req.query;
+    console.log("Search query:", q);
+
+    // Set flash message for the next request
+    req.flash("error", `Oops! Search functionality is coming soon. Thanks for your patience! you can expore using icons`);
+
+
+    // Redirect to homepage or listings page
+    res.redirect('/listings');
+});
+
 
 
 app.all("*", (req, res, next) => {
@@ -95,6 +109,9 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render("listings/error.ejs", { err });
     // res.status(statusCode).send(message);
 });
+
+
+
 
 app.listen(8080, () => {
     console.log("server is listening to port 8080");

@@ -5,7 +5,7 @@ const ExpressError = require("../utils/ExpressError");
 const {isLoggedIn} = require('../middleware')
 const {isOwner} = require('../middleware')
 const {validateListing} = require('../middleware')
-const {index, newListingsForm, editListing, updateListing, deleteListing, detailsOfTheListings, createListing} = require('../controllers/listings')
+const {index, newListingsForm, editListing, updateListing, deleteListing, detailsOfTheListings, createListing, filterListings} = require('../controllers/listings')
 
 const {storage} =require('../cloudConfig')
 const multer  = require('multer')
@@ -31,11 +31,13 @@ router.get("/:id/edit",isLoggedIn,isOwner, wrapAsync(editListing))
 // show Listings ---> updateListing  ---> deleteListing
 router.route('/:id')
 .get( wrapAsync(detailsOfTheListings))
-.put(isLoggedIn,isOwner, validateListing, wrapAsync(updateListing))
+.put(isLoggedIn,isOwner, 
+  upload.single('listing[image]'),
+  validateListing, wrapAsync(updateListing))
 .delete(isLoggedIn,isOwner, wrapAsync(deleteListing))
 
 
-
+router.get("/filter/:q", wrapAsync(filterListings));
 
 
  
